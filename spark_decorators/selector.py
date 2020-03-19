@@ -75,7 +75,7 @@ def execute_selector(name: str, **kwargs):
     return out_df
 
 def register_spark_context(sc: SparkContext):
-    sc["execute_selector"] = execute_selector
+    sc.execute_selector = execute_selector
     spark_context = sc
 
 
