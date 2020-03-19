@@ -51,7 +51,7 @@ out_resolvers = {
     SelectorOutput.PERSISTENT_TABLE: lambda s, df: df.saveAsTable(s.conf.args.output_table, mode="overwrite", path=s.conf.args.output_path)
 }
 
-spark_context: SparkContext
+spark_context: SparkContext = None
 
 def selector(c: SelectorConf): 
     def selector_decorator(func):
@@ -74,7 +74,7 @@ def execute_selector(name: str, **kwargs):
     out_resolvers[s.conf.out_type](s)
     return out_df
 
-def register_spark_context(sc: SparkContext):
+def register_spark_context(sc):
     spark_context = sc
 
 
