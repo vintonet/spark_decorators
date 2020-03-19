@@ -12,31 +12,31 @@ class SelectorOutput(Enum):
     TEMP_TABLE = 2
     PERSISTENT_TABLE = 3
 
-class SelectorConf:
+class SelectorConf():
     name: str
     in_type: SelectorInput
     out_type: SelectorOutput
-    args: list[str]
+    args: list = []
     properties: object
 
-class Selector:
+class Selector():
     name: str
     conf: SelectorConf
     spark_context: SparkContext    
-    func: Callable[DataFrame, DataFrame]
+    func: Callable[[DataFrame], DataFrame]
     def __init__(self, c: SelectorConf, func, sc: SparkContext):
         self.name = c.name
         self.conf = c
         self.func = func
         self.spark_context = sc
 
-selector_registry: dict[str,Selector] = {}
+selector_registry: dict = {}
 
-in_args: dict[SelectorInput,list[str]] = {
+in_args = {
     SelectorInput.NONE: [],
     SelectorInput.TABLE: ["input_table"]
 }
-out_args: dict[SelectorOutput,list[str]] = {
+out_args = {
     SelectorOutput.NONE: [],
     SelectorOutput.TEMP_TABLE: ["output_table"],
     SelectorOutput.PERSISTENT_TABLE: ["output_table", "output_path"]
