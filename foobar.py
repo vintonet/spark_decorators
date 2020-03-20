@@ -8,6 +8,8 @@ os.environ['PYSPARK_PYTHON'] = "/usr/bin/python3.7"
 
 spark = SparkSession.builder.master("local").appName("Test").getOrCreate()
 
+#define mapping with inputs and outputs using @selector decorator
+
 @selector(SelectorConf(name = "foo", in_type = SelectorInput.NONE, out_type = SelectorOutput.TEMP_TABLE))
 def foo(args_dict):
     data = [
@@ -17,17 +19,15 @@ def foo(args_dict):
     ]
     return spark.createDataFrame(data)
 
-execute_selector("foo", output_table="tmp_foo")
-spark.sql("SELECT * FROM tmp_foo").show()
-
 @selector(SelectorConf(name = "bar", in_type = SelectorInput.TABLE, out_type = SelectorOutput.TEMP_TABLE))
 def bar(in_df, args_dict):
     return in_df.withColumn('bar', F.col('foo')*2)
 
-execute_selector("bar", input_table = "tmp_foo", output_table="tmp_bar", spark_session=spark)
-spark.sql("SELECT * FROM tmp_bar").show()
+#print a manifest of selectors
+print(foo)
+print(bar)
 
-
+#define a plan relating executors
 plan = Plan(name="foobar", stages={
     1: Stage("foo", {
         "output_table": "tmp_foo"
@@ -39,9 +39,12 @@ plan = Plan(name="foobar", stages={
      }),
 })
 
-df = plan.execute()
-df.show()
+#print plan
+print(plan)
+#execute plan
+plan.execute().show()
 
+#intemidiary tables are opt-in for plans
 plan2 = Plan(name="foobar", stages={
     1: Stage("foo", {
      }),
@@ -49,4 +52,12 @@ plan2 = Plan(name="foobar", stages={
      }),
 })
 
+print(plan2)
 plan2.execute().show()
+
+#execute individual selectors
+execute_selector("foo", output_table="tmp_foo")
+spark.sql("SELECT * FROM tmp_foo").show()
+
+execute_selector("bar", input_table = "tmp_foo", output_table="tmp_bar", spark_session=spark)
+spark.sql("SELECT * FROM tmp_bar").show()
