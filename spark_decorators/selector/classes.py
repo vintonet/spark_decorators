@@ -27,14 +27,12 @@ class Selector(object):
     name: str
     conf: SelectorConf
     arg_dict: Dict[str, object]
-    spark_context: SparkContext    
     func: Callable[[], DataFrame]
 
-    def __init__(self, conf: SelectorConf, func: Callable[[], DataFrame], sc: SparkContext):
+    def __init__(self, conf: SelectorConf, func: Callable[[], DataFrame]):
         self.name = conf.name
         self.conf = conf
         self.func = func
-        self.spark_context = sc
         
     def __repr(self):
         print_dict = {

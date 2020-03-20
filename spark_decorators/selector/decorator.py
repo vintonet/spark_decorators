@@ -1,16 +1,12 @@
 from spark_decorators.selector.classes import SelectorConf, Selector, SelectorInput
 from spark_decorators.selector.config import in_args, out_args, in_resolvers, out_resolvers
-from spark_decorators import spark_context
 from pyspark.sql import DataFrame
 
 selector_registry: dict = {}
 
 def selector(c: SelectorConf): 
     def selector_decorator(func):
-        if spark_context:
-            selector_registry[c.name] = Selector(c, func, spark_context)
-        else:
-            raise Exception("Spark context must be registered with register_spark_context")
+        selector_registry[c.name] = Selector(c, func)
     return selector_decorator
 
 def execute_selector(name: str, **kwargs) -> DataFrame:
