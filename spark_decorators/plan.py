@@ -1,5 +1,5 @@
 from .decorator import selector_registry, _execute_selector
-from .selector import SelectorInput
+from .selector_classes import SelectorInput
 import json
 from typing import Dict
 from pyspark.sql import DataFrame

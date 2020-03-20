@@ -1,4 +1,4 @@
-from .selector import SelectorInput, SelectorOutput
+from .selector_classes import SelectorInput, SelectorOutput
 
 in_args = {
     SelectorInput.NONE.name: [],
