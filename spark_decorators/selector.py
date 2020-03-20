@@ -23,10 +23,10 @@ class Selector:
     name: str
     conf: SelectorConf
     spark_context: SparkContext    
-    func: Callable[[DataFrame], DataFrame]
-    def __init__(self, c: SelectorConf, func, sc: SparkContext):
-        self.name = c.name
-        self.conf = c
+    func: Callable[[], DataFrame]
+    def __init__(self, conf: SelectorConf, func, sc: SparkContext):
+        self.name = conf.name
+        self.conf = conf
         self.func = func
         self.spark_context = sc
 
