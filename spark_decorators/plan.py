@@ -46,6 +46,3 @@ class Plan(object):
                     self.dataframe_cache[stage_number] = S._execute_selector(stage_selector, in_df = last_stage_df)
                     
         return self.dataframe_cache[stage_numbers[-1]]
-        
-
-

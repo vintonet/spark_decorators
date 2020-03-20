@@ -6,6 +6,8 @@ from typing import Callable, Dict, List
 class SelectorInput(Enum):
     NONE = 1
     TABLE = 2
+    DATAFRAME = 3
+    
 
 class SelectorOutput(Enum):
     NONE = 1
