@@ -1,4 +1,4 @@
-from spark_decorators.selector.classes import SelectorInput, SelectorOutput
+from .selector import SelectorInput, SelectorOutput
 
 in_args = {
     SelectorInput.NONE.name: [],

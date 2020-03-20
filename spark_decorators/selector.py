@@ -1,4 +1,3 @@
-from pyspark import SparkContext
 from pyspark.sql import DataFrame
 from enum import Enum
 from typing import Callable, Dict, List

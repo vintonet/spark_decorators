@@ -1,5 +1,5 @@
-from spark_decorators.selector.classes import SelectorConf, Selector, SelectorInput
-from spark_decorators.selector.config import in_args, out_args, in_resolvers, out_resolvers
+from .selector import SelectorConf, Selector, SelectorInput
+from .config import in_args, out_args, in_resolvers, out_resolvers
 from pyspark.sql import DataFrame
 
 selector_registry: dict = {}

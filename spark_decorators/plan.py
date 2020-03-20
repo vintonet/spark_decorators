@@ -1,4 +1,5 @@
-import spark_decorators.selector as S
+from .decorator import selector_registry, _execute_selector
+from .selector import SelectorInput
 import json
 from typing import Dict
 from pyspark.sql import DataFrame
@@ -36,13 +37,13 @@ class Plan(object):
 
         for idx, stage_number in enumerate(stage_numbers):
             stage = self.stages[stage_number]
-            stage_selector = S.selector_registry[stage.name]
+            stage_selector = selector_registry[stage.name]
 
-            if stage and S.selector_registry[stage.name]:
-                if stage_selector.conf.in_type == S.SelectorInput.NONE:
-                    self.dataframe_cache[stage_number] = S._execute_selector(stage_selector)
+            if stage and selector_registry[stage.name]:
+                if stage_selector.conf.in_type == SelectorInput.NONE:
+                    self.dataframe_cache[stage_number] = _execute_selector(stage_selector)
                 else:
                     last_stage_df = self.dataframe_cache[stage_numbers[idx-1]]
-                    self.dataframe_cache[stage_number] = S._execute_selector(stage_selector, in_df = last_stage_df)
+                    self.dataframe_cache[stage_number] = _execute_selector(stage_selector, in_df = last_stage_df)
                     
         return self.dataframe_cache[stage_numbers[-1]]
