@@ -16,18 +16,15 @@ class Plan(object):
     stages: Dict[int, Stage] = {}
     dataframe_cache: Dict[int, DataFrame] = {}
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, stages: Dict[int, Stage]):
         self.name = name
+        self.stages = stages
         
     def __repr__(self):
         return json.dumps({
             "name": self.name,
             "stages": self.stages
         })
-
-    def add_stage(self, name: str, arguments: dict):
-        stage = Stage(name, arguments)
-        self.stages[len(self.stages)+1] = stage
 
     def execute(self, **kwargs) -> DataFrame:
         stage_numbers = []
@@ -40,7 +37,7 @@ class Plan(object):
         for idx, stage_number in enumerate(stage_numbers):
             stage = self.stages[stage_number]
             stage_selector = S.selector_registry[stage.name]
-            
+
             if stage and S.selector_registry[stage.name]:
                 if stage_selector.conf.in_type == S.SelectorInput.NONE:
                     self.dataframe_cache[stage_number] = S._execute_selector(stage_selector)
