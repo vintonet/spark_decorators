@@ -12,14 +12,14 @@ class SelectorOutput(Enum):
     TEMP_TABLE = 2
     PERSISTENT_TABLE = 3
 
-class SelectorConf():
+class SelectorConf:
     name: str
     in_type: SelectorInput
     out_type: SelectorOutput
     args: list = []
     properties: object
 
-class Selector():
+class Selector:
     name: str
     conf: SelectorConf
     spark_context: SparkContext    
