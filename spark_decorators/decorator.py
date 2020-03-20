@@ -21,7 +21,7 @@ def _execute_selector(s: Selector, **kwargs) -> DataFrame:
     s.conf.arg_names.extend(in_args[s.conf.in_type.name])
     s.conf.arg_names.extend(out_args[s.conf.out_type.name])
     s.arg_dict = {**s.arg_dict, **kwargs}
-    missing_args = [key for key, value in s.arg_dict if key not in s.conf.arg_names]
+    missing_args = [key for key in s.arg_dict.keys() if key not in s.conf.arg_names]
 
     if len(missing_args) > 0:
         raise Exception(f"Missing required arguments: {' '.join(missing_args)}")
