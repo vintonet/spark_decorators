@@ -1,4 +1,4 @@
-from .selector import SelectorConf, Selector, SelectorInput
+from .selector_classes import SelectorConf, Selector, SelectorInput
 from .config import in_args, out_args, in_resolvers, out_resolvers
 from pyspark.sql import DataFrame
 
