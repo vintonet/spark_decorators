@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 
 #vscode
-.vscode
 .vscode/
+
+#spark
+spark-warehouse/

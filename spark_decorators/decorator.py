@@ -28,8 +28,8 @@ def _execute_selector(s: Selector, **kwargs) -> DataFrame:
 
     out_df: DataFrame
 
-    if s.conf.in_type.NONE:
-        out_df = s.func(**s.arg_dict)
+    if s.conf.in_type == SelectorInput.NONE:
+        out_df = s.func(s.arg_dict)
 
     else:
         in_df: DataFrame
@@ -37,7 +37,7 @@ def _execute_selector(s: Selector, **kwargs) -> DataFrame:
             in_df = kwargs["in_df"]
         else:
             in_df = in_resolvers[s.conf.in_type.name](s)
-        out_df = s.func(in_df, **s.arg_dict)
+        out_df = s.func(in_df, s.arg_dict)
 
     out_resolvers[s.conf.out_type.name](s, out_df)
     return out_df
