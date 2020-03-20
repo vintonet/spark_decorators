@@ -1,6 +1,7 @@
 import spark_decorators.selector as S
 import json
 from typing import Dict
+from pyspark.sql import DataFrame
 
 class Stage(object):
     name: str 
@@ -13,6 +14,8 @@ class Stage(object):
 class Plan(object):
     name: str
     stages: Dict[int, Stage] = {}
+    dataframe_cache: Dict[int, DataFrame] = {}
+
     def __init__(self, name: str):
         self.name = name
         
@@ -28,21 +31,24 @@ class Plan(object):
 
     def execute(self, **kwargs) -> DataFrame:
         stage_numbers = []
+
         if kwargs["stages"]: 
             stage_numbers = kwargs["stages"]
         else:
             stage_numbers = range(1,len(self.stages)+1)
-        stage_dataframes = {}
+
         for idx, stage_number in enumerate(stage_numbers):
             stage = self.stages[stage_number]
             stage_selector = S.selector_registry[stage.name]
+            
             if stage and S.selector_registry[stage.name]:
                 if stage_selector.conf.in_type == S.SelectorInput.NONE:
-                    stage_dataframes[stage_number] = S._execute_selector(stage_selector)
+                    self.dataframe_cache[stage_number] = S._execute_selector(stage_selector)
                 else:
-                    last_stage_df = stage_dataframes[stage_numbers[idx-1]]
-                    stage_dataframes[stage_number] = S._execute_selector(stage_selector, in_df = last_stage_df)
-        return stage_dataframes[stage_numbers[-1]]
+                    last_stage_df = self.dataframe_cache[stage_numbers[idx-1]]
+                    self.dataframe_cache[stage_number] = S._execute_selector(stage_selector, in_df = last_stage_df)
+                    
+        return self.dataframe_cache[stage_numbers[-1]]
         
 
 
