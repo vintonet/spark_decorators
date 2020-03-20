@@ -1,9 +1,9 @@
 from spark_decorators.selector.classes import SelectorConf, Selector, SelectorInput
 from spark_decorators.selector.config import in_args, out_args, in_resolvers, out_resolvers
+from spark_decorators import spark_context
 from pyspark.sql import DataFrame
 
 selector_registry: dict = {}
-spark_context = None
 
 def selector(c: SelectorConf): 
     def selector_decorator(func):
@@ -42,12 +42,9 @@ def _execute_selector(s: Selector, **kwargs) -> DataFrame:
         else:
             in_df = in_resolvers[s.conf.in_type.name](s)
         out_df = s.func(in_df, **s.arg_dict)
-        
+
     out_resolvers[s.conf.out_type.name](s, out_df)
     return out_df
-
-def register_spark_context(sc):
-    spark_context = sc
 
 def display_selector(name):
     return str(selector_registry[name])
