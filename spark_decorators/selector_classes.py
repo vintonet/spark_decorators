@@ -25,7 +25,7 @@ class SelectorConf(object):
 class Selector(object):
     name: str
     conf: SelectorConf
-    arg_dict: Dict[str, object]
+    arg_dict: Dict[str, object] = {}
     func: Callable[[], DataFrame]
 
     def __init__(self, conf: SelectorConf, func: Callable[[], DataFrame]):
