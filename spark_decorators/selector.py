@@ -17,9 +17,9 @@ class SelectorConf(object):
     in_type: SelectorInput
     out_type: SelectorOutput
     args: list = []
-    def __init__(self, **kwargs):
-        for k,v in kwargs:
-            self[k] = v
+    def __init__(self, *args, **kwargs):
+        for k,v in kwargs.items():
+            setattr(self, k, v)
 
 
 class Selector(object):
@@ -36,25 +36,25 @@ class Selector(object):
 selector_registry: dict = {}
 
 in_args = {
-    SelectorInput.NONE: [],
-    SelectorInput.TABLE: ["input_table"]
+    SelectorInput.NONE.value: [],
+    SelectorInput.TABLE.value: ["input_table"]
 }
 out_args = {
-    SelectorOutput.NONE: [],
-    SelectorOutput.TEMP_TABLE: ["output_table"],
-    SelectorOutput.PERSISTENT_TABLE: ["output_table", "output_path"]
+    SelectorOutput.NONE.value: [],
+    SelectorOutput.TEMP_TABLE.value: ["output_table"],
+    SelectorOutput.PERSISTENT_TABLE.value: ["output_table", "output_path"]
 }
 in_resolvers = {
-    SelectorInput.NONE: lambda s: None,
-    SelectorInput.TABLE: lambda s: s.spark_context.sql(f"SELECT * FROM {s.conf.args.input_table}")
+    SelectorInput.NONE.value: lambda s: None,
+    SelectorInput.TABLE.value: lambda s: s.spark_context.sql(f"SELECT * FROM {s.conf.properties['input_table']}")
 }
 out_resolvers = {
-    SelectorOutput.NONE: lambda s, df: None,
-    SelectorOutput.TEMP_TABLE: lambda s, df: df.createOrReplaceTempView(s.conf.args.output_table),
-    SelectorOutput.PERSISTENT_TABLE: lambda s, df: df.saveAsTable(s.conf.args.output_table, mode="overwrite", path=s.conf.args.output_path)
+    SelectorOutput.NONE.value: lambda s, df: None,
+    SelectorOutput.TEMP_TABLE.value: lambda s, df: df.createOrReplaceTempView(s.conf.properties['output_table']),
+    SelectorOutput.PERSISTENT_TABLE.value: lambda s, df: df.saveAsTable(s.conf.properties['output_table'], mode="overwrite", path=s.conf.properties['output_path'])
 }
 
-spark_context: SparkContext = None
+spark_context = None
 
 def selector(c: SelectorConf): 
     def selector_decorator(func):
@@ -67,22 +67,15 @@ def selector(c: SelectorConf):
 
 def execute_selector(name: str, **kwargs):
     s: Selector = selector_registry[name]
-    s.conf.args.extend(in_args[s.conf.in_type])
-    s.conf.args.extend(out_args[s.conf.out_type])
+    s.conf.args.extend(in_args[s.conf.in_type.value])
+    s.conf.args.extend(out_args[s.conf.out_type.value])
     missing_kwargs = [key for key, value in kwargs if key not in s.conf.arguments]
     if len(missing_kwargs) > 0:
         raise Exception(f"Missing required arguments: {' '.join(missing_kwargs)}")
-    in_df = in_resolvers[s.conf.in_type](s)
+    in_df = in_resolvers[s.conf.in_type.value](s)
     out_df = s.func(in_df, kwargs)
-    out_resolvers[s.conf.out_type](s)
+    out_resolvers[s.conf.out_type.value](s, out_df)
     return out_df
 
 def register_spark_context(sc):
     spark_context = sc
-
-
-
-
-
-
-    
