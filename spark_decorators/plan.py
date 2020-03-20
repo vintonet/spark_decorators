@@ -30,7 +30,7 @@ class Plan(object):
     def execute(self, **kwargs) -> DataFrame:
         stage_numbers = []
 
-        if kwargs["stages"]: 
+        if "stages" in kwargs.keys(): 
             stage_numbers = kwargs["stages"]
         else:
             stage_numbers = range(1,len(self.stages)+1)

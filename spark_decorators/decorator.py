@@ -15,7 +15,7 @@ def execute_selector(name: str, **kwargs) -> DataFrame:
 
 def _execute_selector(s: Selector, **kwargs) -> DataFrame:
     #if executed against an input dataframe and we want to curry
-    if kwargs["in_df"]:
+    if "in_df" in kwargs.keys():
         s.conf.in_type = SelectorInput.DATAFRAME
 
     s.conf.arg_names.extend(in_args[s.conf.in_type.name])
@@ -33,7 +33,7 @@ def _execute_selector(s: Selector, **kwargs) -> DataFrame:
 
     else:
         in_df: DataFrame
-        if kwargs["in_df"]:
+        if "in_df" in kwargs.keys():
             in_df = kwargs["in_df"]
         else:
             in_df = in_resolvers[s.conf.in_type.name](s)
