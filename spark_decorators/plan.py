@@ -40,8 +40,8 @@ class Plan(object):
                 if stage_selector.conf.in_type == S.SelectorInput.NONE:
                     stage_dataframes[stage_number] = S._execute_selector(stage_selector)
                 else:
-                    in_df = stage_dataframes[stage_numbers[idx-1]]
-                    stage_dataframes[stage_number] = S._execute_selector(stage_selector, in_df = in_df)
+                    last_stage_df = stage_dataframes[stage_numbers[idx-1]]
+                    stage_dataframes[stage_number] = S._execute_selector(stage_selector, in_df = last_stage_df)
         return stage_dataframes[stage_numbers[-1]]
         
 
