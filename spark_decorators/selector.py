@@ -57,7 +57,7 @@ def selector(c: SelectorConf):
     def selector_decorator(func):
         if spark_context:
             #business logic to allow
-            selector_registry[sd.name] = Selector(c, func, spark_context)
+            selector_registry[c.name] = Selector(c, func, spark_context)
         else:
             raise Exception("Spark context must be registered with register_spark_context")
     return selector_decorator
